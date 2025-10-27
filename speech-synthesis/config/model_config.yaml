@@ -1,0 +1,235 @@
+# TTS Model Configuration File
+# This file contains all configurable parameters for the speech synthesis pipeline
+
+# Model Architecture Configuration
+model:
+  # Text processing
+  vocab_size: 256                    # Size of character vocabulary
+  embedding_dim: 512                 # Character embedding dimension
+  
+  # Encoder configuration
+  encoder_dim: 512                   # Encoder hidden dimension
+  encoder_conv_layers: 3             # Number of encoder convolutional layers
+  encoder_kernel_size: 5             # Kernel size for encoder convolutions
+  
+  # Decoder configuration
+  decoder_dim: 1024                  # Decoder hidden dimension
+  attention_dim: 128                 # Attention mechanism dimension
+  
+  # Mel spectrogram configuration
+  num_mels: 80                       # Number of mel spectrogram channels
+  
+  # PostNet configuration
+  postnet_dim: 512                   # PostNet hidden dimension
+  postnet_layers: 5                  # Number of PostNet layers
+  postnet_kernel_size: 5             # Kernel size for PostNet convolutions
+  
+  # Dropout rates
+  encoder_dropout: 0.5               # Encoder dropout rate
+  decoder_dropout: 0.1               # Decoder dropout rate
+  attention_dropout: 0.1             # Attention dropout rate
+
+# Audio Processing Configuration
+audio:
+  # Sampling parameters
+  sample_rate: 22050                 # Audio sample rate (Hz)
+  
+  # STFT parameters
+  n_fft: 1024                        # FFT window size
+  hop_length: 256                    # Hop length between frames
+  win_length: 1024                   # Window length for STFT
+  
+  # Mel spectrogram parameters
+  n_mels: 80                         # Number of mel filter banks
+  fmin: 0                            # Minimum frequency (Hz)
+  fmax: 8000                         # Maximum frequency (Hz)
+  
+  # Audio preprocessing
+  preemphasis: 0.97                  # Preemphasis coefficient
+  min_level_db: -100                 # Minimum dB level for normalization
+  ref_level_db: 20                   # Reference dB level
+  max_norm: 4.0                      # Maximum normalization value
+  clip_norm: true                    # Whether to clip normalized values
+  
+  # Griffin-Lim algorithm parameters
+  griffin_lim_iters: 50              # Number of Griffin-Lim iterations
+  power: 1.5                         # Power for spectrogram
+
+# Training Configuration
+training:
+  # Optimization parameters
+  learning_rate: 0.001               # Initial learning rate
+  batch_size: 16                     # Training batch size
+  num_epochs: 100                    # Total number of training epochs
+  
+  # Gradient clipping
+  gradient_clip_val: 1.0             # Gradient clipping value
+  
+  # Learning rate scheduling
+  lr_scheduler: "StepLR"             # Learning rate scheduler type
+  lr_step_size: 50000                # Step size for LR scheduler
+  lr_gamma: 0.5                      # LR decay factor
+  
+  # Early stopping
+  patience: 10                       # Early stopping patience
+  min_delta: 0.001                   # Minimum change for improvement
+  
+  # Loss weights
+  mel_loss_weight: 1.0               # Weight for mel spectrogram loss
+  postnet_loss_weight: 1.0           # Weight for postnet loss
+  stop_loss_weight: 50.0             # Weight for stop token loss
+  
+  # Validation
+  validation_split: 0.1              # Fraction of data for validation
+  validation_frequency: 1            # Validate every N epochs
+  
+  # Checkpointing
+  save_frequency: 10                 # Save checkpoint every N epochs
+  keep_checkpoint_max: 5             # Maximum checkpoints to keep
+
+# Dataset Configuration
+dataset:
+  # Data parameters
+  data_dir: "data"                   # Directory containing training data
+  metadata_file: "metadata.csv"     # Metadata file name
+  
+  # Sequence length limits
+  max_text_length: 200               # Maximum text sequence length
+  max_mel_length: 1000               # Maximum mel sequence length
+  min_text_length: 5                 # Minimum text sequence length
+  min_mel_length: 50                 # Minimum mel sequence length
+  
+  # Text processing
+  use_phonemes: false                # Whether to use phoneme conversion
+  phoneme_language: "en-us"          # Language for phoneme conversion
+  
+  # Data augmentation
+  apply_augmentation: true           # Enable data augmentation
+  speed_perturbation: true           # Apply speed perturbation
+  pitch_perturbation: true           # Apply pitch perturbation
+  noise_injection: true              # Add background noise
+  
+  # Data loading
+  num_workers: 4                     # Number of data loading workers
+  pin_memory: true                   # Pin memory for GPU training
+  drop_last: true                    # Drop last incomplete batch
+
+# Synthesis Configuration
+synthesis:
+  # Decoder parameters
+  max_decoder_steps: 1000            # Maximum decoder steps during inference
+  stop_threshold: 0.5                # Stop token threshold
+  
+  # Vocoder configuration
+  use_vocoder: true                  # Whether to use neural vocoder
+  vocoder_type: "MelGAN"             # Type of vocoder ("MelGAN", "WaveNet", "Griffin-Lim")
+  
+  # Prosody control
+  enable_prosody_control: true       # Enable prosody modification
+  default_speed: 1.0                 # Default speaking speed
+  default_pitch: 0.0                 # Default pitch shift (semitones)
+  default_energy: 1.0                # Default energy scaling
+  
+  # Output parameters
+  output_format: "wav"               # Output audio format
+  normalize_output: true             # Normalize output audio
+
+# Paths and Directories
+paths:
+  # Training paths
+  checkpoint_dir: "checkpoints"      # Directory for model checkpoints
+  log_dir: "logs"                    # Directory for training logs
+  tensorboard_dir: "tensorboard"     # Directory for TensorBoard logs
+  
+  # Output paths
+  output_dir: "outputs"              # Directory for synthesis outputs
+  plot_dir: "plots"                  # Directory for generated plots
+  
+  # Data paths
+  train_data_dir: "data/train"       # Training data directory
+  val_data_dir: "data/val"           # Validation data directory
+  test_data_dir: "data/test"         # Test data directory
+
+# Logging Configuration
+logging:
+  # Logging levels
+  level: "INFO"                      # Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  console_level: "INFO"              # Console logging level
+  file_level: "DEBUG"                # File logging level
+  
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  
+  # Log files
+  log_to_file: true                  # Whether to log to file
+  log_file: "logs/tts_pipeline.log"  # Main log file
+  error_log_file: "logs/errors.log"  # Error log file
+  
+  # Log rotation
+  max_log_size: 10485760             # Maximum log file size (10MB)
+  backup_count: 5                    # Number of backup log files
+
+# Evaluation Configuration
+evaluation:
+  # Metrics to compute
+  compute_mel_metrics: true          # Compute mel spectrogram metrics
+  compute_audio_metrics: true        # Compute audio quality metrics
+  compute_attention_metrics: true    # Compute attention alignment metrics
+  compute_prosody_metrics: true      # Compute prosody metrics
+  
+  # Reference audio for evaluation
+  use_reference_audio: false         # Whether to use reference audio
+  reference_audio_dir: "data/reference"  # Reference audio directory
+  
+  # Evaluation frequency
+  eval_frequency: 5                  # Evaluate every N epochs
+  save_eval_results: true            # Save evaluation results to file
+
+# Experimental Features
+experimental:
+  # Multi-speaker support
+  enable_multi_speaker: false       # Enable multi-speaker training
+  num_speakers: 1                    # Number of speakers in dataset
+  speaker_embedding_dim: 64          # Speaker embedding dimension
+  
+  # Style control
+  enable_style_control: false       # Enable style/emotion control
+  style_embedding_dim: 32            # Style embedding dimension
+  
+  # Advanced techniques
+  use_guided_attention: false       # Use guided attention loss
+  use_mixed_precision: false        # Use mixed precision training
+  use_dynamic_loss_scaling: false   # Use dynamic loss scaling
+  
+  # Research features
+  enable_ablation_study: false      # Enable ablation study mode
+  ablation_components: []            # Components to ablate
+
+# Hardware Configuration
+hardware:
+  # Device settings
+  device: "auto"                     # Device to use ("auto", "cpu", "cuda", "cuda:0")
+  mixed_precision: false            # Use automatic mixed precision
+  
+  # Memory management
+  max_memory_usage: 0.9              # Maximum GPU memory usage (fraction)
+  gradient_checkpointing: false     # Use gradient checkpointing
+  
+  # Parallel training
+  use_data_parallel: false          # Use DataParallel
+  use_distributed: false            # Use DistributedDataParallel
+  
+  # Optimization
+  compile_model: false               # Use torch.compile (PyTorch 2.0+)
+  optimization_level: "O1"           # Optimization level for mixed precision
+
+# Version and Metadata
+metadata:
+  config_version: "1.0.0"           # Configuration file version
+  model_version: "tacotron2_v1"     # Model version identifier
+  experiment_name: "baseline"        # Experiment name
+  description: "Baseline Tacotron 2 configuration for speech synthesis research"
+  author: "TTS Research Team"
+  created_date: "2024-01-01"
+  last_modified: "2024-01-01"
